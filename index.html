@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Lovely Kitty! ✨</title>
+    <style>
+        /* --- General Styles --- */
+        body {
+            font-family: 'Arial', sans-serif; /* Simple, widely available font. Can replace with a cute webfont if preferred */
+            /* Start with a black background */
+            background: #000000; /* Solid black start */
+            color: #ecf0f1; /* Lighter text color for dark mode */
+            text-align: center; /* Center all text content */
+            margin: 0; /* Remove default body margin */
+            padding: 0; /* Remove default padding */
+            display: flex; /* Use flexbox to arrange content */
+            flex-direction: column; /* Stack children vertically */
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            min-height: 100vh; /* Ensure the body takes at least the full viewport height */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            transition: background 2s ease-in-out, color 2s ease-in-out; /* Smooth transition for lights effect */
+            position: relative; /* Needed for absolute positioning of effects relative to body */
+            padding-top: 30px; /* Space from the top edge */
+            box-sizing: border-box; /* Include padding in total height/width */
+        }
+
+        /* Style for the "Lights On" effect (Brighter Hello Kitty palette) */
+        body.lights-on {
+            background: linear-gradient(to bottom, #ffb6c1, #ffccd5); /* Light, sweet pink gradient */
+            color: #333; /* Default text color remains dark in light mode */
+        }
+
+
+        /* --- Title Container (Rectangular box at the top) --- */
+        .title-container {
+            background-color: rgba(255, 255, 255, 0.95); /* Hello Kitty White background */
+            padding: 20px 30px; /* Vertical padding, horizontal padding */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Shadow */
+            max-width: 600px; /* Limit width */
+            width: 90%; /* Responsive width */
+            box-sizing: border-box; /* Include padding in width */
+            margin-bottom: 30px; /* Space below title box */
+            position: relative;
+            z-index: 15; /* Above message box and images (10/5) */
+            opacity: 0; /* Start hidden */
+            visibility: hidden; /* Not interactive */
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out; /* Smooth reveal */
+        }
+
+        body.lights-on .title-container {
+             opacity: 1; /* Fully visible when lights are on */
+             visibility: visible;
+        }
+
+        /* Title elements colors and sizes inside the title box */
+        /* Reduced sizes to help fit on one line */
+         .title-container h1 {
+             color: #e34040; /* Hello Kitty Red */
+             font-size: 2.5em; /* Reduced from 3.5em */
+             margin-bottom: 5px; /* Add a little space below h1 */
+             line-height: 1.2; /* Adjust line height for better fit */
+         }
+         .title-container h2 {
+             color: #e91e63; /* Pinkish-Red */
+             font-size: 1.8em; /* Reduced from 2em */
+             margin-top: 0; /* Remove margin-top, using h1's margin-bottom instead */
+             line-height: 1.2; /* Adjust line height for better fit */
+         }
+         /* h3 is commented out in HTML */
+         /* .title-container h3 { color: #fbc02d; font-size: 1.4em; font-style: italic; margin-top: 5px; } */
+
+
+        h1, h2, h3 { margin: 0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); }
+
+
+        /* --- Message Container (The box that appears later) --- */
+        .message-container { /* Renamed from .container */
+            background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white background */
+            padding: 30px;
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Add a shadow for depth */
+            max-width: 700px; /* Limit the maximum width */
+            width: 90%; /* Make the box responsive */
+            box-sizing: border-box; /* Include padding and border in size */
+            margin-top: 0; /* Space handled by title-container margin-bottom */
+            margin-bottom: 30px; /* Keep this margin */
+            position: relative;
+            z-index: 10; /* Below title container, buttons, and cake. Above images (5). */
+            opacity: 0; /* Start hidden */
+            visibility: hidden; /* Start hidden */
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out; /* Smooth reveal for the box */
+            /* Add transition for style changes when it becomes final-state or sure-state */
+             transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out,
+                         background-color 0.5s ease, padding 0.5s ease; /* Example */
+        }
+
+         /* Text color within the message container when visible (initial state) */
+        .message-container .message-content p,
+        .message-container .message-content .signature {
+             color: #455a64; /* Dark gray color for readability */
+        }
+
+
+        /* --- Message Content (Content inside the message box, appears later) --- */
+        .message-content {
+            opacity: 0; /* Start invisible */
+            visibility: hidden; /* Not interactive */
+            height: 0; /* Collapse height initially */
+            overflow: hidden; /* Hide overflowing text */
+            transition: opacity 1.5s ease-in-out, height 1.5s ease-in-out, visibility 1.5s ease-in-out; /* Smooth reveal */
+            /* Note: color transition is tricky with textContent, relies on parent container's state classes */
+        }
+
+        /* State when message is revealed (initial birthday message) */
+        .message-content.visible {
+            opacity: 1; /* Fully visible */
+            visibility: visible; /* Make interactive */
+            height: auto; /* Allow content to determine height */
+             color: #455a64; /* Restore text color */
+        }
+
+        .message-content p {
+            font-size: 1.15em; line-height: 1.7; margin: 15px auto; max-width: 550px; /* Styles for paragraphs inside message */
+             color: inherit; /* Inherit color from parent .message-content.visible */
+             text-align: left; /* Default alignment for paragraphs */
+        }
+
+        .message-content .signature {
+            margin-top: 30px; font-style: normal; font-weight: bold; /* Styles for signature inside message */
+             color: inherit; /* Inherit color from parent .message-content.visible */
+             text-align: left; /* Default alignment for signature */
+        }
+
+        /* --- Styles for the Message Container when it holds the FINAL 'I Love You' Message --- */
+         .message-container.final-state {
+             margin-bottom: 0; /* Or adjust as needed */
+             text-align: center; /* Center text inside the container */
+             padding: 40px 30px; /* Slightly more padding for the final message */
+             background-color: #fff; /* Ensure it's fully opaque white */
+             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+         }
+
+         /* Styles for the content when the parent is in the final state */
+         .message-container.final-state .message-content {
+             height: auto; /* Ensure height is auto */
+             opacity: 1; /* Ensure it's fully visible */
+             visibility: visible;
+             /* The new styling for the final text */
+             font-size: 2em; /* Larger font for the final message */
+             color: #e34040; /* Hello Kitty Red */
+             font-weight: bold;
+             text-align: center; /* Center the final text */
+             white-space: pre-wrap; /* <<-- ADDED THIS to respect \n */
+              /* Add transition for these specific properties */
+              transition: font-size 0.5s ease, color 0.5s ease, font-weight 0.5s ease;
+         }
+
+
+         /* --- Styles for the Message Container when it holds the 'Are You Sure?' sequence Message --- */
+         /* This uses the default .message-container padding/shadow but overrides the text style */
+         .message-container.sure-state {
+             /* Keep default container styles */
+             /* text-align: center; */ /* Can center the whole box, text centering handled by content styles below */
+             padding: 30px; /* Use default padding */
+             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Use default shadow */
+         }
+
+          /* Styles for the content when the parent is in the 'sure' state */
+         .message-container.sure-state .message-content {
+              height: auto;
+              opacity: 1;
+              visibility: visible;
+              /* Styling for the 'Are You sure?' text sequence */
+              font-size: 1.5em; /* Adjust size */
+              color: #e91e63; /* Pinkish-Red */
+              font-weight: normal; /* Keep normal or slightly bold */
+              text-align: center; /* Center the text */
+              white-space: pre-wrap; /* Preserve line breaks if any in messages */
+              transition: font-size 0.3s ease, color 0.3s ease, font-weight 0.3s ease; /* Add transitions */
+         }
+
+
+        /* --- Button Container --- */
+        .button-container {
+            /* Keep margin-top to space from the message container */
+            margin-top: 20px;
+            /* Keep margin-bottom if you want space below buttons BEFORE they disappear */
+            margin-bottom: 20px;
+            z-index: 30; /* Ensure buttons are above everything else */
+            position: relative;
+            display: flex; /* Use flexbox for button arrangement */
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            justify-content: center; /* Center buttons */
+            gap: 15px; /* Space between buttons */
+            padding: 10px;
+             box-sizing: border-box;
+             width: 100%;
+             min-height: 60px; /* Give it some minimum height */
+             /* Add transition for when it disappears */
+             transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+
+        /* --- Button Styles --- */
+        button {
+            background-color: #e34040; /* Hello Kitty Red Button */
+            color: white;
+            padding: 15px 30px; /* Larger padding */
+            border: none;
+            border-radius: 10px; /* More rounded corners */
+            font-size: 1.2em; /* Larger font */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease, opacity 0.5s ease, visibility 0.5s ease; /* Added transitions for visibility */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Bigger shadow */
+            /* Removed margin here, using gap in button-container instead */
+             /* Set transform origin for scaling */
+             transform-origin: center;
+        }
+
+        button:hover {
+            background-color: #c0392b; /* Darker red on hover */
+            /* Apply scale on hover too, if already scaled */
+            /* Use current scale from custom property or default to 1 */
+            transform: translateY(-3px) scale(var(--current-scale, 1));
+        }
+
+        button:active {
+             /* Apply scale on active too */
+             transform: translateY(0) scale(var(--current-scale, 1));
+             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+         /* Style for the 'I Love You Too Baby' button specifically */
+        #iLoveYouBtn {
+             background-color: #e91e63; /* Pinkish-Red, slightly different */
+             /* Add transition for the scale transformation */
+             transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.5s ease, visibility 0.5s ease;
+             /* Custom property to track current scale for hover/active */
+             --current-scale: 1;
+             z-index: 31; /* Ensure it can overlap the "No" button when scaled */
+        }
+
+         #iLoveYouBtn:hover {
+             background-color: #d81b60; /* Darker pink on hover */
+         }
+
+
+        /* Style for the 'No, I Dont Love You...' button */
+        #noLoveBtn {
+             background-color: #9e9e9e; /* Grey color */
+             z-index: 30; /* Ensure it's below the scaling I Love You button */
+        }
+
+         #noLoveBtn:hover {
+             background-color: #757575; /* Darker grey on hover */
+        }
+
+
+        /* --- Effect Styles --- */
+
+        /* --- Side Image Containers --- */
+        .image-container {
+            position: fixed; /* Keep images fixed relative to viewport */
+            top: 50%; /* Vertically center */
+            transform: translateY(-50%); /* Adjust for centering */
+            width: 300px; /* Increased width */
+            height: 80vh; /* Keep height the same */
+            overflow: hidden; /* Hide anything outside */
+            display: flex; /* Use flex to center image inside */
+            justify-content: center;
+            align-items: center;
+            z-index: 5; /* Below main content and buttons */
+            opacity: 0; /* Start container hidden */
+            visibility: hidden; /* Container not interactive */
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out; /* Smooth container appearance */
+            pointer-events: none; /* Don't block clicks within the container area */
+        }
+
+        #leftImageContainer { left: 20px; /* Space from the left edge */ }
+        #rightImageContainer { right: 20px; /* Space from the right edge */ }
+
+        /* Individual Images inside containers */
+        .image-container img {
+            display: block; /* Remove extra space below image */
+            max-width: 100%; /* Make image responsive within container */
+            max-height: 100%;
+            height: auto; /* Maintain aspect ratio */
+            object-fit: contain; /* Ensure the whole image is visible */
+            opacity: 0; /* Image starts transparent */
+            /* Add transform and transition for smooth rotation *if* applied */
+            transform: rotate(0deg); /* Default to no rotation */
+            transition: opacity 1s ease-in-out, transform 0.5s ease-in-out; /* Smooth fade and smooth rotation */
+             pointer-events: none; /* Don't block clicks *on* the image */
+        }
+
+        /* When the image inside the container should be visible */
+        .image-container img.visible {
+             opacity: 1;
+        }
+
+
+        /* --- CSS Cake (Themed) --- */
+        #cssCake {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px; /* Container width */
+            height: 300px; /* Container height - adjust as needed */
+            z-index: 25; /* Below buttons (30), above messages (10) and images (5) */
+            opacity: 0; /* Start hidden */
+            visibility: hidden; /* Start hidden */
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out; /* Smooth appearance and fade out */
+            pointer-events: none; /* Don't block clicks */
+        }
+
+        #cssCake div {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Cake Base - Keep brown */
+        .cake-base {
+            bottom: 0;
+            width: 100%;
+            height: 30px;
+            background-color: #8B4513; /* SaddleBrown */
+            border-radius: 15px 15px 0 0; /* Rounded top corners */
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Cake Layers - Hello Kitty Reddish-Pink (more distinct from background) */
+        .cake-layer {
+             width: 80%;
+             height: 40px;
+             background-color: #f8a5c2; /* Slightly darker Pink */
+             border-radius: 10px;
+             box-shadow: inset 0 5px 5px rgba(0,0,0,0.1);
+        }
+        .layer-1 { bottom: 30px; width: 90%; height: 50px; } /* Bottom layer */
+        .layer-2 { bottom: 80px; width: 80%; } /* Middle layer */
+        .layer-3 { bottom: 120px; width: 70%; } /* Top layer */
+
+
+        /* Frosting - Hello Kitty White */
+        .frosting {
+            background-color: #F0F8FF; /* AliceBlue / Off-White */
+            border-radius: 15px 15px 5px 5px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+        }
+        .frosting-1 { bottom: 75px; width: 95%; height: 20px; border-radius: 10px 10px 5px 5px;}
+        .frosting-2 { bottom: 115px; width: 85%; height: 20px; border-radius: 10px 10px 5px 5px;}
+        .frosting-3 { bottom: 155px; width: 75%; height: 20px; border-radius: 10px 10px 5px 5px;} /* Top frosting */
+
+
+        /* Candles Container (to position candles relative to the top) */
+        .candles {
+            position: absolute;
+            bottom: 200px; /* Moved higher */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%; /* Increased width to spread 5 candles */
+            display: flex;
+            justify-content: space-around; /* Evenly distribute candles */
+        }
+
+        /* Individual Candle */
+        .candle {
+            position: relative; /* For positioning the flame */
+            width: 8px;
+            height: 30px;
+            background: linear-gradient(to top, #e34040, #c0392b); /* Red candles */
+            border-radius: 2px;
+        }
+
+        /* Candle Flame - Only visible when the .candles container has the .candles-lit class */
+        .candles.candles-lit .candle::before {
+            content: '';
+            position: absolute;
+            top: -15px; /* Position above the candle */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 15px;
+            background: radial-gradient(circle at 50% 0, #FFFF00 0%, #FFD700 70%, rgba(255, 165, 0, 0) 100%); /* Yellow to Orange gradient */
+            border-radius: 50% 50% 30% 30%; /* Flame shape */
+            box-shadow: 0 0 8px rgba(255, 165, 0, 0.8); /* Glow effect */
+            animation: flicker 1s ease-in-out infinite alternate; /* Flame flicker animation */
+             /* Smooth transition for flame appearance */
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+        }
+
+        /* Candles start unlit (flame is hidden) */
+         .candle::before {
+            content: ''; /* Keep content for structure */
+             position: absolute; /* Keep positioning */
+             top: -15px;
+             left: 50%;
+             transform: translateX(-50%);
+             width: 10px; height: 15px; /* Keep dimensions for transition */
+             border-radius: 50% 50% 30% 30%; /* Keep shape for transition */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+         }
+
+
+        /* Keyframe Animation for Flame Flicker */
+        @keyframes flicker {
+            0% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(-2px) scale(1.05); opacity: 0.9; }
+        }
+
+
+         /* --- Balloon Container --- */
+        .balloon-container {
+            position: fixed; /* Fixed position relative to viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Don't block clicks */
+            overflow: hidden; /* Hide balloons outside the viewport */
+            z-index: 1; /* Below other content */
+        }
+
+        /* Individual Balloon Style (The Oval Shape) */
+        .balloon {
+            position: absolute;
+            bottom: -150px; /* Start further below the viewport to make string visible */
+            width: 50px; /* Size of the balloon */
+            height: 65px;
+            /* Create the balloon shape: 50% horizontal, 60% top vertical, 40% bottom vertical */
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            opacity: 0.9;
+            animation: floatUp 8s linear infinite; /* Animation defined below - infinite loop */
+        }
+
+         /* Balloon Knot/Neck (small circle below the main shape) */
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -5px; /* Position just below the main shape */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background-color: inherit; /* Inherit balloon color */
+            border-radius: 50%;
+            z-index: 2; /* Ensure knot is above string start */
+        }
+
+        /* Balloon String (a simple line below the knot) */
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -150px; /* Start below the knot, extend downwards */
+            left: 50%;
+            transform: translateX(-50%); /* Keep centered below knot */
+            width: 1px; /* Thin line */
+            background-color: rgba(0,0,0,0.4); /* Dark string color */
+            height: 150px; /* Length of the string section */
+            z-index: 1; /* Below knot */
+        }
+
+
+        /* Keyframe Animation for Balloons - Looping indefinitely */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.9;
+            }
+            50% {
+                 opacity: 1;
+            }
+            100% {
+                transform: translateY(-140vh) rotate(30deg); /* Float higher and slightly rotate */
+                opacity: 0.9; /* Stay visible */
+            }
+        }
+
+        /* Hide the audio player controls */
+        #birthdaySong {
+            display: none;
+        }
+
+
+        /* Optional: Media Query for smaller screens to hide images */
+        @media (max-width: 768px) {
+            .image-container {
+                display: none; /* Hide side images on small screens */
+            }
+             /* Adjust button container gap for small screens */
+             .button-container {
+                 gap: 10px;
+                 margin-top: 15px; /* Adjusted from 0 */
+                  margin-bottom: 15px; /* Adjusted from 0 */
+             }
+             button {
+                 padding: 10px 20px; /* Smaller padding */
+                 font-size: 1em; /* Smaller font */
+             }
+             /* Adjust final message font size within the message container on small screens */
+              .message-container.final-state .message-content {
+                 font-size: 1.5em; /* Smaller font for final message */
+                 padding: 20px; /* Adjust padding */
+              }
+               .message-container.sure-state .message-content {
+                 font-size: 1.2em; /* Smaller font for 'Are You Sure?' sequence message */
+              }
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Title Container (Rectangular box at the top) -->
+    <div class="title-container">
+        <h1>Happy Birthday Ayesha</h1>
+        <h2>I Love You So Much Madam Ji 😭💖</h2>
+        <!-- <h3>affectionately known as "Madam Ji"</h3> Commented out the third heading -->
+    </div>
+
+
+    <!-- Message Container (The box that appears later with the message - This will also hold the final message) -->
+    <div class="message-container"> <!-- Renamed from .container -->
+        <!-- This div contains the main message and signature, initially hidden -->
+        <div class="message-content">
+            <!-- Original message will be set via JS -->
+        </div>
+    </div>
+
+    <!-- Elements for Effects -->
+
+    <!-- Side Image Containers -->
+    <div id="leftImageContainer" class="image-container">
+        <img id="leftImage" src="" alt="Ayesha Photo Left">
+    </div>
+    <div id="rightImageContainer" class="image-container">
+        <img id="rightImage" src="" alt="Ayesha Photo Right">
+    </div>
+
+
+    <!-- CSS Cake Container (contains all cake parts) -->
+    <div id="cssCake">
+        <div class="cake-base"></div>
+        <div class="cake-layer layer-1"></div>
+        <div class="frosting frosting-1"></div>
+        <div class="cake-layer layer-2"></div>
+        <div class="frosting frosting-2"></div>
+        <div class="cake-layer layer-3"></div>
+        <div class="frosting frosting-3"></div>
+        <!-- Candles will go here - UPDATED TO 5 CANDLES -->
+        <div class="candles">
+             <div class="candle"></div>
+             <div class="candle"></div>
+             <div class="candle"></div>
+             <div class="candle"></div>
+             <div class="candle"></div> <!-- Corrected and confirmed 5th candle -->
+        </div>
+    </div>
+
+    <!-- This container will hold the dynamically created balloons -->
+    <div id="balloonContainer" class="balloon-container"></div>
+
+    <!-- Audio element for music - SOURCE POINTS TO LOCAL FILE AND SET TO LOOP -->
+    <!-- Ensure hbd.mp3 is in the same folder as this HTML file -->
+    <audio id="birthdaySong" src="hbd.mp3" preload="auto" loop></audio>
+
+
+    <!-- Buttons to Trigger Effects - Initially only the first one is visible via JS -->
+    <div class="button-container">
+        <button id="turnOnLightsBtn">Turn On The Lights</button>
+        <button id="playMusicBtn">Play Birthday Music</button>
+        <button id="flyBalloonsBtn">Fly Balloons</button>
+        <button id="showCakeBtn">Show Cake</button>
+        <button id="lightCandlesBtn">Light The Candles</button>
+        <button id="showMessageBtn">Click Here Cutie 😘</button>
+        <!-- NEW BUTTONS ADDED HERE -->
+        <button id="iLoveYouBtn">I Love You Too Baby ❤️</button>
+        <button id="noLoveBtn">No, I Don't Love You 💔</button>
+    </div>
+
+
+    <script>
+        // --- JavaScript for Sequential Interactivity ---
+
+        // Get references to HTML elements
+        const body = document.body;
+        const titleContainer = document.querySelector('.title-container'); // Get the title container div
+        const messageContainer = document.querySelector('.message-container'); // Get the message container div
+        const messageContent = document.querySelector('.message-content'); // Get the message content div inside the container
+        const turnOnLightsBtn = document.getElementById('turnOnLightsBtn');
+        const playMusicBtn = document.getElementById('playMusicBtn');
+        const flyBalloonsBtn = document.getElementById('flyBalloonsBtn'); // New button reference
+        const showCakeBtn = document.getElementById('showCakeBtn'); // New button reference
+        const lightCandlesBtn = document.getElementById('lightCandlesBtn');
+        const showMessageBtn = document.getElementById('showMessageBtn');
+        const cssCake = document.getElementById('cssCake'); // Reference to the cake container
+        const cakeCandles = document.querySelector('#cssCake .candles'); // Get the candles container within the cake
+        const balloonContainer = document.getElementById('balloonContainer');
+        const audio = document.getElementById('birthdaySong');
+
+        // References to the new buttons
+        const iLoveYouBtn = document.getElementById('iLoveYouBtn');
+        const noLoveBtn = document.getElementById('noLoveBtn');
+
+        // Image elements and logic
+        const leftImageContainer = document.getElementById('leftImageContainer');
+        const rightImageContainer = document.getElementById('rightImageContainer');
+        const leftImage = document.getElementById('leftImage');
+        const rightImage = document.getElementById('rightImage');
+        const imageFilenames = []; // Array to hold image filenames
+        // Populate the array with pic1.jpg through pic12.jpg
+        for (let i = 1; i <= 12; i++) {
+            imageFilenames.push(`pic${i}.jpg`); // Assumes images are named pic1.jpg, pic2.jpg, etc.
+        }
+
+        // Variable to track the starting index of the *next* image pair to be shown
+        let nextImagePairStartIndex = 0; // Initialize, will be set correctly in the first button click
+
+        // Variable to track the current scale of the 'I Love You' button
+        let iLoveYouScale = 1;
+
+        // Variable to track the number of times the "No" button has been clicked
+        let noClickCount = 0;
+
+        // Array of messages for the "No" button clicks
+        const noMessages = [
+            "Pakka? U Don't love me baby? 🥺", // Click 1 (index 0)
+            "Ekdum pakka na? Thoda sa bhi nhi? 🥺🥺", // Click 2 (index 1)
+            "Aghhhhhh Pls, Thoda toh krti hogi 😭😭😭", // Click 3 (index 2)
+            "My heart is breaking... 💔💔🥺🥺", // Click 4 (index 3)
+            "I'm going to cry... 😭😭😭😭😭",
+            "How can you say no to this face? 🥺🥺🥺🥺🥺", // Click 5 (index 4)
+            "I thought we had something special... 🥺🥺🥺🥺🥺🥺", // Click 6 (index 5)
+            "Please reconsider, my love... 🥺🥺🥺🥺🥺🥺🥺", // Click 7 (index 6)
+            "Don't you love me even a little bit? 😭🥺🥺🥺🥺🥺🥺🥺🥺", // Click 8 (index 7)
+            "Is there really no love left for me? 💔🥺🥺🥺🥺🥺🥺🥺🥺🥺", // Click 9 (index 8)
+            "Okay... I still love you more than anything... 💖🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺" // Click 10 (index 9)
+            // After 10 clicks, it will repeat the last message (index 9)
+        ];
+
+
+        let balloonInterval; // Variable to store the interval ID for balloons
+
+
+        // Helper function to apply rotation based on filename
+        function applyImageRotation(imgElement, filename) {
+            // Get just the filename part of the path
+             const justFilename = filename.split('/').pop();
+
+            // If the filename is 'pic5.jpg', apply no rotation
+            if (justFilename === 'pic5.jpg') {
+                imgElement.style.transform = 'rotate(0deg)';
+            } else {
+                // Otherwise, apply 90 degrees anti-clockwise rotation
+                imgElement.style.transform = 'rotate(-90deg)';
+            }
+             // Ensure transform transition is applied smoothly (already in CSS)
+        }
+
+
+        // Function to update side images with fade and rotation effect
+        function updateImages() {
+            // Only update if there are enough images (at least 2, and an even number for pairs)
+            if (imageFilenames.length < 2 || imageFilenames.length % 2 !== 0) {
+                console.warn("Image update skipped: Need at least 2 images and an even number for pairs.");
+                return; // Exit if images are not properly configured
+            }
+
+            // Determine the indices for the pair we are about to show based on the current nextImagePairStartIndex
+            const currentLeftImageIndex = nextImagePairStartIndex; // This is the start of the pair we will display NOW
+            const currentRightImageIndex = nextImagePairStartIndex + 1; // The second image in that pair NOW
+
+            // Check if the calculated indices are valid before proceeding (should be caught by the length check, but good practice)
+             if (currentLeftImageIndex >= imageFilenames.length || currentRightImageIndex >= imageFilenames.length) {
+                 console.error("Error calculating current image indices. Stopping image updates.");
+                 // Optionally stop any continuous image cycling here if you had an interval
+                 return; // Exit to prevent errors
+             }
+
+             // Get the filenames for the current pair
+             const leftFilename = imageFilenames[currentLeftImageIndex];
+             const rightFilename = imageFilenames[currentRightImageIndex];
+
+
+            // --- Fade Out ---
+            // Remove the class that makes the images visible, triggering the CSS fade-out
+            leftImage.classList.remove('visible');
+            rightImage.classList.remove('visible');
+
+            // Immediately reset transform to 0deg (or remove it) for the fade-out/in transition
+            // This ensures the fade-in starts from a 0deg state for the new image source *before* applying the new rotation
+            leftImage.style.transform = 'rotate(0deg)';
+            rightImage.style.transform = 'rotate(0deg)';
+
+
+            // Wait for fade-out transition (1 second in CSS) before changing source and fading back in
+            setTimeout(() => {
+                // Update image sources for the *current* pair
+                leftImage.src = leftFilename;
+                rightImage.src = rightFilename;
+
+                // Apply the correct rotation for the new images *before* fading them in
+                applyImageRotation(leftImage, leftFilename);
+                applyImageRotation(rightImage, rightFilename);
+
+
+                // --- Calculate the *next* starting index for the *subsequent* update ---
+                let nextPairStart = nextImagePairStartIndex + 2;
+
+                // Handle wrap around: If the next start index is beyond the last possible starting index
+                // (The last possible start index for a pair is length - 2. E.g., for 12 images (0-11), last pair is 10, 11. Start is 10. Length - 2 = 12 - 2 = 10)
+                // If the calculated start index is equal to or beyond the total number of images
+                if (nextPairStart >= imageFilenames.length) {
+                    nextPairStart = 0; // Reset to the beginning (pic1, pic2 starting at index 0)
+                }
+
+                // Update the global variable so the next click uses this new starting index
+                nextImagePairStartIndex = nextPairStart;
+
+                // --- Fade In ---
+                // Add the 'visible' class back to trigger the CSS fade-in transition
+                // Use requestAnimationFrame sequence to ensure the browser recognizes the state change
+                // and applies the transition correctly AFTER the source and transform are updated.
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                         leftImage.classList.add('visible');
+                         rightImage.classList.add('visible');
+                    });
+                });
+
+            }, 1000); // Delay matches the 'opacity' transition duration in CSS
+        }
+
+
+        // --- Step 1: Turn On Lights ---
+        turnOnLightsBtn.addEventListener('click', () => {
+            // Change body background (Lights On effect)
+            body.classList.add('lights-on');
+
+            // Reveal the title container smoothly
+            titleContainer.style.opacity = 1;
+            titleContainer.style.visibility = 'visible';
+            titleContainer.style.pointerEvents = 'auto'; // Make it clickable/interactive (though no interactive elements inside)
+
+            // Reveal side image containers IF enough images are available
+             if (imageFilenames.length >= 2 && imageFilenames.length % 2 === 0) {
+                 leftImageContainer.style.opacity = 1;
+                 leftImageContainer.style.visibility = 'visible';
+                 leftImageContainer.style.pointerEvents = 'none'; // Still non-interactive
+                 rightImageContainer.style.opacity = 1;
+                 rightImageContainer.style.visibility = 'visible';
+                 rightImageContainer.style.pointerEvents = 'none'; // Still non-interactive
+
+                 // Set the initial image sources (pic1.jpg and pic2.jpg - indices 0 and 1)
+                 const initialLeftFilename = imageFilenames[0];
+                 const initialRightFilename = imageFilenames[1];
+                 leftImage.src = initialLeftFilename;
+                 rightImage.src = initialRightFilename;
+
+                 // Apply the correct rotation for the initial images
+                 applyImageRotation(leftImage, initialLeftFilename);
+                 applyImageRotation(rightImage, initialRightFilename);
+
+
+                 // Add the visible class to trigger the *initial* fade-in of pic1 & pic2
+                 // This fade-in happens *after* the container's opacity transition (1.5s) finishes implicitly
+                 // Use rAF sequence for robustness in applying the class after src/transform change
+                  requestAnimationFrame(() => {
+                     requestAnimationFrame(() => {
+                         leftImage.classList.add('visible');
+                         rightImage.classList.add('visible');
+                     });
+                 });
+
+                 // Set the nextImagePairStartIndex for the *next* update (which will show pic3/pic4)
+                 nextImagePairStartIndex = 2;
+
+             } else {
+                 console.error("Not enough images (need at least 2 and an even number) for side display. Hiding image containers.");
+                 // Disable the image update function if insufficient images
+                   updateImages = () => { console.warn("Image updates are disabled due to insufficient images."); };
+                   // Hide image containers permanently
+                   leftImageContainer.style.display = 'none';
+                   rightImageContainer.style.display = 'none';
+             }
+
+
+            // Hide this button smoothly
+            turnOnLightsBtn.style.opacity = 0;
+            turnOnLightsBtn.style.visibility = 'hidden';
+            turnOnLightsBtn.style.pointerEvents = 'none';
+
+
+            // Show the next button ("Play Music") after the reveal transition finishes
+            // Use the longer transition time (1.5s for title/images) for better sync
+            setTimeout(() => {
+                turnOnLightsBtn.style.display = 'none'; // Remove from layout
+
+                // Show Play Music Button
+                playMusicBtn.style.display = 'inline-block'; // Make it take up space
+                playMusicBtn.style.opacity = 1;
+                playMusicBtn.style.visibility = 'visible';
+                playMusicBtn.style.pointerEvents = 'auto'; // Make it interactive
+            }, 1500); // Delay matches the container/body transition time
+
+        });
+
+        // --- Step 2: Play Music ---
+        playMusicBtn.addEventListener('click', () => {
+            // IMPORTANT: Update images *before* performing the main action for this step
+            updateImages();
+
+            // Play the music
+            // Adding .catch() is good practice to handle potential user gesture requirements
+            audio.play().catch(error => {
+                console.error("Error playing audio:", error);
+                // User might need to interact with the page first for audio to play
+                // You could add a message to the user here if needed
+            });
+
+            // Hide this button smoothly
+            playMusicBtn.style.opacity = 0;
+            playMusicBtn.style.visibility = 'hidden';
+            playMusicBtn.style.pointerEvents = 'none';
+
+            // Show the next button ("Fly Balloons") after the transition finishes
+            setTimeout(() => {
+                 playMusicBtn.style.display = 'none'; // Remove from layout
+                 // Show Fly Balloons Button
+                 flyBalloonsBtn.style.display = 'inline-block'; // Make it take up space
+                 flyBalloonsBtn.style.opacity = 1;
+                 flyBalloonsBtn.style.visibility = 'visible';
+                 flyBalloonsBtn.style.pointerEvents = 'auto'; // Make it interactive
+             }, 500); // Match the button's opacity transition time
+        });
+
+        // --- Step 3: Fly Balloons ---
+        flyBalloonsBtn.addEventListener('click', () => {
+             // IMPORTANT: Update images *before* performing the main action for this step
+             updateImages();
+
+             // Start creating and flying balloons continuously
+             // Ensure we don't start a new interval if one is already running
+             if (balloonInterval) clearInterval(balloonInterval); // Clear any previous interval
+             balloonInterval = setInterval(createBalloon, 300); // Create a balloon every 300ms
+
+            // Hide this button smoothly
+            flyBalloonsBtn.style.opacity = 0;
+            flyBalloonsBtn.style.visibility = 'hidden';
+            flyBalloonsBtn.style.pointerEvents = 'none';
+
+            // Show the NEXT button ("Show Cake") after the transition finishes
+             setTimeout(() => {
+                 flyBalloonsBtn.style.display = 'none'; // Remove from layout
+                 // Show Show Cake Button
+                 showCakeBtn.style.display = 'inline-block'; // Make it take up space
+                 showCakeBtn.style.opacity = 1;
+                 showCakeBtn.style.visibility = 'visible';
+                 showCakeBtn.style.pointerEvents = 'auto'; // Make it interactive
+             }, 500); // Match the button's opacity transition time
+        });
+
+        // --- Step 4: Show Cake ---
+        showCakeBtn.addEventListener('click', () => {
+             // IMPORTANT: Update images *before* performing the main action for this step
+             updateImages();
+
+            // Show the CSS cake smoothly
+            cssCake.style.opacity = 1;
+            cssCake.style.visibility = 'visible';
+            cssCake.style.pointerEvents = 'none'; // Cake itself is not interactive
+
+            // Hide this button smoothly
+            showCakeBtn.style.opacity = 0;
+            showCakeBtn.style.visibility = 'hidden';
+            showCakeBtn.style.pointerEvents = 'none';
+
+            // Show the NEXT button ("Light Candles") after the transition finishes
+             setTimeout(() => {
+                 showCakeBtn.style.display = 'none'; // Remove from layout
+                 // Show Light Candles Button
+                 lightCandlesBtn.style.display = 'inline-block'; // Make it take up space
+                 lightCandlesBtn.style.opacity = 1;
+                 lightCandlesBtn.style.visibility = 'visible';
+                 lightCandlesBtn.style.pointerEvents = 'auto'; // Make it interactive
+             }, 500); // Match the button's opacity transition time
+         });
+
+
+         // --- Step 5: Light Candles ---
+         lightCandlesBtn.addEventListener('click', () => {
+             // IMPORTANT: Update images *before* performing the main action for this step
+             updateImages();
+
+            // Add the class to the candles container to light them via CSS animation
+            cakeCandles.classList.add('candles-lit');
+
+            // Hide this button smoothly
+            lightCandlesBtn.style.opacity = 0;
+            lightCandlesBtn.style.visibility = 'hidden';
+            lightCandlesBtn.style.pointerEvents = 'none';
+
+            // Show the NEXT button ("A Message For You") after the transition finishes
+             setTimeout(() => {
+                 lightCandlesBtn.style.display = 'none'; // Remove from layout
+                 // Show A Message For You Button
+                 showMessageBtn.style.display = 'inline-block'; // Make it take up space
+                 showMessageBtn.style.opacity = 1;
+                 showMessageBtn.style.visibility = 'visible';
+                 showMessageBtn.style.pointerEvents = 'auto'; // Make it interactive
+             }, 500); // Match the button's opacity transition time
+         });
+
+
+        // --- Step 6: Show Message (and then show the final choice buttons) ---
+        showMessageBtn.addEventListener('click', () => {
+             // IMPORTANT: Update images *before* performing the main action for this step
+             // This is the last step with a button before the final choice, so cycle images one last time.
+             updateImages();
+
+             // Reveal the message container box smoothly
+             messageContainer.style.opacity = 1;
+             messageContainer.style.visibility = 'visible';
+             messageContainer.style.pointerEvents = 'auto'; // Make it interactive (though no interactive elements inside)
+
+             // Ensure the initial message content is loaded and visible
+             // (This is the original birthday message)
+             // We use innerHTML here because the original message has multiple <p> tags
+             messageContent.innerHTML = `
+                <p>My dearest love, on your special day, my heart overflows with joy just thinking of you.</p>
+                <p>Wishing you all the happiness in the world, today and always. May this year bring you endless smiles, incredible adventures, and everything you've ever dreamed of.</p>
+                <p>Thank you for being with me, Madam Ji😭💖 You are the most beautiful girl in the entire world😭💖 I love you soo much , always and forever💖</p>
+                <p class="signature">With love, Your Handsome Boyfriend👉👈</p>
+             `; // Restore original content with HTML structure
+             messageContent.classList.add('visible'); // Ensure content is visible
+
+             // --- Fade out the cake smoothly ---
+             // Start fading the cake out at the same time the message comes in
+             cssCake.style.opacity = 0;
+             // After the cake fades out, hide it completely
+             setTimeout(() => {
+                cssCake.style.visibility = 'hidden';
+             }, 1500); // Match the cake's opacity transition duration
+
+
+             // Hide the "A Message For You" button smoothly
+             showMessageBtn.style.opacity = 0;
+             showMessageBtn.style.visibility = 'hidden';
+             showMessageBtn.style.pointerEvents = 'none';
+
+             // After the button fades out, hide it from layout and show the final choice buttons
+             setTimeout(() => {
+                 showMessageBtn.style.display = 'none'; // Remove from layout
+
+                 // Show the two final choice buttons
+                 iLoveYouBtn.style.display = 'inline-block';
+                 iLoveYouBtn.style.opacity = 1;
+                 iLoveYouBtn.style.visibility = 'visible';
+                 iLoveYouBtn.style.pointerEvents = 'auto';
+
+                 noLoveBtn.style.display = 'inline-block';
+                 noLoveBtn.style.opacity = 1;
+                 noLoveBtn.style.visibility = 'visible';
+                 noLoveBtn.style.pointerEvents = 'auto';
+
+                 // Reset noClickCount and state classes for the final choice interaction
+                 noClickCount = 0;
+                 messageContainer.classList.remove('final-state', 'sure-state');
+
+
+             }, 500); // Match button's opacity transition time
+        });
+
+
+        // --- Final Choice Button Logic ---
+
+        // When 'I Love You Too Baby' is clicked
+        iLoveYouBtn.addEventListener('click', () => {
+            // Stop the balloon animation interval
+            if (balloonInterval) clearInterval(balloonInterval);
+
+            // Hide both final choice buttons smoothly using opacity/visibility
+             iLoveYouBtn.style.opacity = 0;
+             iLoveYouBtn.style.visibility = 'hidden';
+             iLoveYouBtn.style.pointerEvents = 'none';
+
+             noLoveBtn.style.opacity = 0;
+             noLoveBtn.style.visibility = 'hidden';
+             noLoveBtn.style.pointerEvents = 'none';
+
+             // Remove 'sure-state' class if it was applied
+             messageContainer.classList.remove('sure-state');
+
+            // --- Modify the existing message container and content for the FINAL I LOVE YOU state ---
+            // 1. Change the text inside the messageContent div
+            // Use textContent for safety against injecting HTML if the final message changes
+            // ADDING \n HERE FOR THE LINE BREAK
+            messageContent.textContent = "Yayyyy! Mujhe pata hai you love me mera bacha😭💖.\nI Love You Moreeeee🥰💖";
+
+            // 2. Add the 'final-state' class to the messageContainer to apply new styles
+            messageContainer.classList.add('final-state');
+
+            // 3. Ensure messageContent is still visible (it should be from the previous step)
+            messageContent.classList.add('visible'); // This ensures height/visibility are correct
+
+
+             // After buttons have finished their fade transition, remove them from layout
+             setTimeout(() => {
+                 iLoveYouBtn.style.display = 'none';
+                 noLoveBtn.style.display = 'none';
+             }, 600); // Delay slightly longer than the button's opacity transition (0.5s)
+
+             // Optional: Stop music or change it here
+             // audio.pause(); // Example: pause music
+        });
+
+        // When 'No, I Don't Love You...' is clicked
+        noLoveBtn.addEventListener('click', () => {
+            // IMPORTANT: Update images *before* performing the main action for this step
+            updateImages();
+
+            // Increment the click counter for the 'No' button
+            noClickCount++;
+
+            // Increase the scale factor for the 'I Love You' button
+            // You can adjust the multiplier (e.g., 1.1, 1.2) for faster or slower growth
+            iLoveYouScale *= 1.3; // Increase scale by 30% each time
+
+            // Apply the new scale transform to the 'I Love You' button
+            iLoveYouBtn.style.transform = `scale(${iLoveYouScale})`;
+            // Update the custom property for hover/active effects
+            iLoveYouBtn.style.setProperty('--current-scale', iLoveYouScale);
+
+            // --- Update the message content based on click count ---
+            // Calculate the index (0-based). Clamp it to the last index if clicks exceed message count.
+            const messageIndex = Math.min(noClickCount - 1, noMessages.length - 1);
+
+            // Set the text content of the messageContent div
+            // Use textContent to replace all child elements (like <p> tags) with plain text
+            messageContent.textContent = noMessages[messageIndex];
+
+            // Remove the 'final-state' class if it was there
+            messageContainer.classList.remove('final-state');
+            // Add the 'sure-state' class to apply specific styling for this message state
+            messageContainer.classList.add('sure-state');
+
+            // Ensure the message content is visible (it should be already)
+            messageContent.classList.add('visible');
+
+
+            // The 'No' button remains visible, but the growing 'I Love You' button will cover it
+            // We don't need explicit logic to disable 'No', as the visual overlay handles it.
+            // The 'I Love You' button's z-index (31) is higher than 'No' (30).
+        });
+
+
+        // --- Function to create a single balloon (themed) ---
+        // (Keep this function as it is)
+        function createBalloon() {
+            // Hello Kitty themed colors for balloons: Pinks, Reds, White/Light Grey, maybe a touch of blue
+            const colors = [
+                '#ffb6c1', '#ffccd5', '#f8a5c2', '#e34040',
+                '#e91e63', '#c0392b', '#ffffff', '#f0f0f0',
+                '#bdbdbd', '#86a8e7' /* A touch of blue */
+            ];
+
+            const balloon = document.createElement('div');
+            balloon.classList.add('balloon');
+
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            balloon.style.backgroundColor = randomColor;
+
+            // Set random initial horizontal position (0% to 100% of viewport width)
+            const randomLeft = Math.random() * 100;
+            balloon.style.left = randomLeft + 'vw';
+
+            // Slightly randomize starting bottom position (below viewport)
+            const randomBottom = -150 - (Math.random() * 100); // Start between -150px and -250px
+            balloon.style.bottom = randomBottom + 'px';
+
+            // Set random animation duration and delay for variety (delay helps stagger)
+            const randomDuration = 7 + Math.random() * 5; // Duration between 7s and 12s
+            const randomDelay = Math.random() * 0.5; // Delay up to 0.5s before animation starts
+            balloon.style.animationDuration = randomDuration + 's';
+            balloon.style.animationDelay = randomDelay + 's';
+
+            balloonContainer.appendChild(balloon);
+
+            // Remove the balloon element after a set time to prevent memory issues
+            // Calculate total time = start_delay + animation_duration + buffer (e.g., 2s)
+            const removalTime = (randomDelay + randomDuration + 2) * 1000;
+             setTimeout(() => {
+                 // Check if the balloon still exists in the container before trying to remove it
+                 if (balloon.parentElement === balloonContainer) {
+                    balloon.remove();
+                 }
+             }, removalTime);
+        }
+
+
+        // --- Initial setup: Hide elements and buttons and prepare for the first step ---
+         document.addEventListener('DOMContentLoaded', () => {
+             // Hide title container initially
+             titleContainer.style.opacity = 0;
+             titleContainer.style.visibility = 'hidden';
+             titleContainer.style.pointerEvents = 'none'; // Not interactive when hidden
+
+             // Hide image containers initially. They will become visible when lights are turned on.
+             leftImageContainer.style.opacity = 0;
+             leftImageContainer.style.visibility = 'hidden';
+             leftImageContainer.style.pointerEvents = 'none';
+             rightImageContainer.style.opacity = 0;
+             rightImageContainer.style.visibility = 'hidden';
+             rightImageContainer.style.pointerEvents = 'none';
+
+             // Ensure images inside start transparent and without rotation via CSS
+             leftImage.classList.remove('visible'); // Ensure class is not present initially
+             rightImage.classList.remove('visible'); // Ensure class is not present initially
+             leftImage.style.transform = 'rotate(0deg)'; // Reset transform
+             rightImage.style.transform = 'rotate(0deg)'; // Reset transform
+
+
+             // Initialize nextImagePairStartIndex to 0 here for safety, though it's immediately overwritten in the first button click
+             nextImagePairStartIndex = 0;
+
+
+             // Check if there are enough images initially. If not, warn and disable image updates.
+             // We need at least 2 images for the first pair, and an even number for subsequent pairs.
+             if (imageFilenames.length < 2 || imageFilenames.length % 2 !== 0) {
+                  console.error("Image filenames array needs at least 2 and an even number of images (e.g., pic1.jpg through pic12.jpg). Side images will not display correctly or update.");
+                  // Disable the image update function if insufficient images
+                   updateImages = () => { console.warn("Image updates are disabled due to insufficient images."); };
+                   // Hide image containers permanently
+                   leftImageContainer.style.display = 'none';
+                   rightImageContainer.style.display = 'none';
+             }
+
+              // IMPORTANT: Do NOT set initial image sources or rotation here.
+              // This is done inside the 'turnOnLightsBtn' handler when the containers become visible.
+
+
+             // Hide message container and its content initially
+             messageContainer.style.opacity = 0;
+             messageContainer.style.visibility = 'hidden';
+             messageContainer.style.pointerEvents = 'none';
+             messageContent.classList.remove('visible'); // Ensure message content is hidden
+
+             // Also remove any state classes from messageContainer on load
+             messageContainer.classList.remove('final-state', 'sure-state');
+             // Clear initial content as it will be set by JS later
+             messageContent.innerHTML = '';
+
+
+             // Ensure only the first button ('Turn On The Lights') is initially visible and interactive
+             turnOnLightsBtn.style.display = 'inline-block'; // Use inline-block or block to make it visible
+             turnOnLightsBtn.style.opacity = 1;
+             turnOnLightsBtn.style.visibility = 'visible';
+             turnOnLightsBtn.style.pointerEvents = 'auto'; // Make it interactive
+
+             // Hide all other buttons initially using display: none AND ensuring transition properties are reset
+             // Explicitly set opacity/visibility/pointerEvents to match the hidden state CSS
+             playMusicBtn.style.display = 'none'; playMusicBtn.style.opacity = 0; playMusicBtn.style.visibility = 'hidden'; playMusicBtn.style.pointerEvents = 'none';
+             flyBalloonsBtn.style.display = 'none'; flyBalloonsBtn.style.opacity = 0; flyBalloonsBtn.style.visibility = 'hidden'; flyBalloonsBtn.style.pointerEvents = 'none';
+             showCakeBtn.style.display = 'none'; showCakeBtn.style.opacity = 0; showCakeBtn.style.visibility = 'hidden'; showCakeBtn.style.pointerEvents = 'none';
+             lightCandlesBtn.style.display = 'none'; lightCandlesBtn.style.opacity = 0; lightCandlesBtn.style.visibility = 'hidden'; lightCandlesBtn.style.pointerEvents = 'none';
+             showMessageBtn.style.display = 'none'; showMessageBtn.style.opacity = 0; showMessageBtn.style.visibility = 'hidden'; showMessageBtn.style.pointerEvents = 'none';
+             // Hide the new buttons initially
+             iLoveYouBtn.style.display = 'none'; iLoveYouBtn.style.opacity = 0; iLoveYouBtn.style.visibility = 'hidden'; iLoveYouBtn.style.pointerEvents = 'none';
+             noLoveBtn.style.display = 'none'; noLoveBtn.style.opacity = 0; noLoveBtn.style.visibility = 'hidden'; noLoveBtn.style.pointerEvents = 'none';
+
+             // Initialize noClickCount here as well for a clean start
+             noClickCount = 0;
+
+
+             // Hide the CSS cake initially
+             cssCake.style.opacity = 0;
+             cssCake.style.visibility = 'hidden';
+             cssCake.style.pointerEvents = 'none';
+
+             // Ensure candles are initially unlit (CSS handles the hidden flame state)
+             cakeCandles.classList.remove('candles-lit');
+
+         }); // End of DOMContentLoaded listener
+
+
+    </script>
+
+</body>
+</html>
